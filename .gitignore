@@ -1,0 +1,14 @@
+# Archivos temporales de extracción del PDF (no son parte del código fuente)
+pages/
+App.pdf
+App.fig
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+*.swp
+*.swo

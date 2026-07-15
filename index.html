@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Casa Ancestral — Restaurante de cocina boliviana tradicional. Menú, reservas y pedidos en línea.">
+  <meta name="theme-color" content="#5C1A1A">
+  <title>Casa Ancestral — Cocina Boliviana</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Preconnect Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ═══════════════════════════════════════
+       BOTTOM NAVIGATION (fixed on mobile,
+       sidebar on desktop)
+  ═══════════════════════════════════════ -->
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Navegación principal">
+    <!-- Desktop sidebar brand logo -->
+    <div class="sidebar-brand" id="sidebar-brand">
+      <img src="assets/images/logo.png" alt="Logo Ancestral" class="sidebar-brand__logo">
+      <div>
+        <div class="sidebar-brand__name">Casa Ancestral</div>
+        <div class="sidebar-brand__tagline">Cocina boliviana</div>
+      </div>
+    </div>
+
+    <button class="nav-item active" data-nav="home" id="nav-home" aria-label="Inicio">
+      <span class="nav-item__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      </span>
+      <span class="nav-item__label">Inicio</span>
+    </button>
+
+    <button class="nav-item" data-nav="menu" id="nav-menu" aria-label="Menú">
+      <span class="nav-item__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v18M8 3a5 5 0 0 1 5 5H3a5 5 0 0 1 5-5z"/><path d="M18 3v5a4 4 0 0 1-4 4v10"/></svg>
+      </span>
+      <span class="nav-item__label">Menú</span>
+    </button>
+
+    <button class="nav-item" data-nav="reservations" id="nav-reservations" aria-label="Reservas">
+      <span class="nav-item__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </span>
+      <span class="nav-item__label">Reservas</span>
+    </button>
+
+    <button class="nav-item" data-nav="cart" id="nav-cart" aria-label="Carrito">
+      <span class="nav-item__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="cart-badge" id="cart-badge">0</span>
+      </span>
+      <span class="nav-item__label">Carrito</span>
+    </button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1 — SPLASH
+  ═══════════════════════════════════════ -->
+  <section class="screen active" id="screen-splash" role="main" aria-label="Pantalla de bienvenida">
+    <div class="splash__logo-wrap">
+      <img src="assets/images/logo.png" alt="Logo Casa Ancestral">
+    </div>
+    <div class="splash__brand">Casa Ancestral</div>
+    <div class="splash__tagline">Cocina Boliviana Tradicional</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 2 — WELCOME (Register/Login)
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-welcome" role="main" aria-label="Pantalla de inicio de sesión o registro">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="goBack()" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__right"></div>
+    </header>
+    <div class="auth-top-band"></div>
+    <div class="auth-body">
+      <div class="auth-button-group">
+        <button class="btn btn-outline" id="btn-go-register" onclick="navigateTo('screen-register-1')" style="font-size:15px; padding:20px;">
+          REGISTRARSE
+        </button>
+        <button class="btn btn-outline" id="btn-go-login" onclick="navigateTo('screen-login')" style="font-size:15px; padding:20px;">
+          INICIAR SESIÓN
+        </button>
+      </div>
+    </div>
+    <!-- Bottom nav placeholder -->
+    <div class="bottom-spacer"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 3 — LOGIN
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-login" role="main" aria-label="Iniciar sesión">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="navigateTo('screen-welcome')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__right"></div>
+    </header>
+    <div class="auth-top-band"></div>
+    <div class="auth-body">
+      <form id="login-form" onsubmit="handleLogin(event)" novalidate>
+        <div class="auth-button-group">
+          <div>
+            <input type="email" class="input-field" id="login-email" placeholder="Correo Electrónico" autocomplete="email" required aria-label="Correo electrónico">
+            <span class="error-msg" id="login-email-err">Ingresa un correo válido.</span>
+          </div>
+          <div>
+            <input type="password" class="input-field" id="login-pass" placeholder="Contraseña" autocomplete="current-password" required aria-label="Contraseña">
+            <span class="error-msg" id="login-pass-err">Ingresa tu contraseña.</span>
+          </div>
+        </div>
+        <div class="auth-button-row" style="margin-top:24px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="navigateTo('screen-welcome')">VOLVER</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btn-login-submit">SIGUIENTE</button>
+        </div>
+      </form>
+    </div>
+    <div class="bottom-spacer"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 4 — REGISTER STEP 1
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-register-1" role="main" aria-label="Registro paso 1">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="navigateTo('screen-welcome')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__right"></div>
+    </header>
+    <div class="auth-top-band"></div>
+    <div class="auth-body">
+      <form id="register-form-1" onsubmit="handleRegisterStep1(event)" novalidate>
+        <div class="auth-button-group">
+          <div>
+            <input type="text" class="input-field" id="reg-nombre" placeholder="Nombre" autocomplete="given-name" required aria-label="Nombre">
+            <span class="error-msg" id="reg-nombre-err">Ingresa tu nombre.</span>
+          </div>
+          <div>
+            <input type="text" class="input-field" id="reg-apellido" placeholder="Apellido" autocomplete="family-name" required aria-label="Apellido">
+            <span class="error-msg" id="reg-apellido-err">Ingresa tu apellido.</span>
+          </div>
+          <div>
+            <input type="text" class="input-field" id="reg-dob" placeholder="Día/Mes/Año" maxlength="10" aria-label="Fecha de nacimiento" autocomplete="bday">
+            <span class="error-msg" id="reg-dob-err">Ingresa tu fecha de nacimiento.</span>
+          </div>
+          <div>
+            <input type="email" class="input-field" id="reg-email" placeholder="Correo Electrónico" autocomplete="email" required aria-label="Correo electrónico">
+            <span class="error-msg" id="reg-email-err">Ingresa un correo válido.</span>
+          </div>
+        </div>
+        <div class="auth-button-row" style="margin-top:24px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="navigateTo('screen-welcome')">VOLVER</button>
+          <button type="submit" class="btn btn-primary btn-sm">SIGUIENTE</button>
+        </div>
+      </form>
+    </div>
+    <div class="bottom-spacer"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 5 — REGISTER STEP 2
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-register-2" role="main" aria-label="Registro paso 2">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="navigateTo('screen-register-1')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__right"></div>
+    </header>
+    <div class="auth-top-band"></div>
+    <div class="auth-body">
+      <form id="register-form-2" onsubmit="handleRegisterStep2(event)" novalidate>
+        <div class="auth-button-group">
+          <div>
+            <input type="password" class="input-field" id="reg-pass1" placeholder="Elige una Contraseña" autocomplete="new-password" required aria-label="Nueva contraseña">
+            <span class="error-msg" id="reg-pass1-err">Mínimo 6 caracteres.</span>
+          </div>
+          <div>
+            <input type="password" class="input-field" id="reg-pass2" placeholder="Repetir Contraseña" autocomplete="new-password" required aria-label="Repetir contraseña">
+            <span class="error-msg" id="reg-pass2-err">Las contraseñas no coinciden.</span>
+          </div>
+        </div>
+        <div class="auth-button-row" style="margin-top:24px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="navigateTo('screen-register-1')">VOLVER</button>
+          <button type="submit" class="btn btn-primary btn-sm">SIGUIENTE</button>
+        </div>
+      </form>
+    </div>
+    <div class="bottom-spacer"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 6 — WELCOME USER (Post Login)
+  ═══════════════════════════════════════ -->
+  <section class="screen success-screen" id="screen-welcome-user" role="main" aria-label="Bienvenida">
+    <div class="welcome-user__logo">
+      <img src="assets/images/logo.png" alt="Logo Ancestral">
+    </div>
+    <div class="welcome-user__text">
+      <div class="welcome-user__greeting">BIENVENIDO</div>
+      <div class="welcome-user__name" id="welcome-name">FERNANDO</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 7 — HOME
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-home" role="main" aria-label="Inicio">
+    <header class="app-header" id="home-header">
+      <div class="header__left">
+        <button class="header__btn" aria-label="Menú lateral" onclick="showToast('Menú lateral próximamente')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="header__title">Casa Ancestral</div>
+      <div class="header__right">
+        <button class="header__btn" id="home-bell-btn" aria-label="Notificaciones" onclick="showToast('No hay notificaciones nuevas')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="header__avatar" onclick="showToast('Perfil próximamente')">
+          <img src="assets/images/logo.png" alt="Avatar usuario">
+        </div>
+      </div>
+    </header>
+
+    <div class="screen-content" id="home-content">
+      <!-- Logo + Brand -->
+      <div class="home-logo-section">
+        <div class="home-logo-card">
+          <img src="assets/images/logo.png" alt="Casa Ancestral logo">
+        </div>
+      </div>
+
+      <!-- Category Buttons -->
+      <div class="home-categories">
+        <button class="home-category-btn" onclick="openMenuCategory('fuertes')" id="cat-fuertes">PLATOS FUERTES</button>
+        <button class="home-category-btn" onclick="openMenuCategory('piqueos')" id="cat-piqueos">PIQUEOS</button>
+        <button class="home-category-btn" onclick="openMenuCategory('postres')" id="cat-postres">POSTRES</button>
+        <button class="home-category-btn" onclick="openMenuCategory('bebidas')" id="cat-bebidas">BEBIDAS</button>
+      </div>
+
+      <!-- Patio Hero -->
+      <div class="home-section" style="border-top:none; padding-top: var(--space-4);">
+        <div class="home-patio-card" onclick="setNavActive('reservations'); navigateTo('screen-reservations')">
+          <img src="assets/images/patio.png" alt="Nuestro Patio Central" class="home-patio-card__img">
+          <div class="home-patio-card__overlay">
+            <h2 class="home-patio-card__title">Nuestro Patio<br>Central</h2>
+            <p class="home-patio-card__desc">Disfruta de una velada bajo las estrellas en el corazón de nuestra casona restaurada.</p>
+            <span class="home-patio-card__link">CONOCE NUESTRA HISTORIA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reserva Quick Card -->
+      <div class="home-reserva-card">
+        <div>
+          <h2 class="home-reserva-card__title">Reserva una Mesa</h2>
+          <p class="home-reserva-card__desc">Asegura tu lugar en este viaje culinario por el tiempo.</p>
+        </div>
+        <div class="home-reserva-card__avail">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Disponibilidad: 19:30 &amp; 21:00</span>
+        </div>
+        <button class="btn btn-accent btn-primary-full" onclick="setNavActive('reservations'); navigateTo('screen-reservations')">
+          CONSULTAR FECHAS
+        </button>
+      </div>
+
+      <!-- Cosecha de la Semana -->
+      <div class="home-section">
+        <div style="padding: 0 var(--px);">
+          <div class="home-section__header">
+            <div>
+              <h2 class="home-section__title">Cosecha de la Semana</h2>
+              <p class="home-section__subtitle">Sabores de la tierra directo a tu mesa.</p>
+            </div>
+            <a class="home-section__link" onclick="setNavActive('menu'); navigateTo('screen-menu')" href="#">Ver Menú →</a>
+          </div>
+        </div>
+        <div class="featured-scroll">
+          <div class="featured-card" onclick="openDishDetail('pan_campo')">
+            <div class="featured-card__image-wrap">
+              <img src="assets/images/pan_campo.png" alt="Pan de Campo" loading="lazy">
+              <span class="featured-card__badge">Horno de Barro</span>
+            </div>
+            <div class="featured-card__body">
+              <div class="featured-card__name">Pan de Campo</div>
+              <div class="featured-card__price">8 bs</div>
+              <div class="featured-card__desc">Masa madre de 48 horas, fermentada en frío y horneada a la leña.</div>
+              <div class="featured-card__tags">
+                <span class="featured-card__tag">Artesanal</span>
+                <span class="featured-card__tag">Orgánico</span>
+              </div>
+            </div>
+          </div>
+          <div class="featured-card" onclick="openDishDetail('cazuela_mani')">
+            <div class="featured-card__image-wrap">
+              <img src="assets/images/cazuela_mani.png" alt="Cazuela de Maní" loading="lazy">
+              <span class="featured-card__badge">Favorito</span>
+            </div>
+            <div class="featured-card__body">
+              <div class="featured-card__name">Cazuela de Maní</div>
+              <div class="featured-card__price">20 bs</div>
+              <div class="featured-card__desc">Caldo de maní con res, verduras y chuño.</div>
+              <div class="featured-card__tags">
+                <span class="featured-card__tag">Tradicional</span>
+              </div>
+            </div>
+          </div>
+          <div class="featured-card" onclick="openDishDetail('anticucho')">
+            <div class="featured-card__image-wrap">
+              <img src="assets/images/anticucho.png" alt="Anticucho" loading="lazy">
+              <span class="featured-card__badge">Popular</span>
+            </div>
+            <div class="featured-card__body">
+              <div class="featured-card__name">Anticucho</div>
+              <div class="featured-card__price">25 bs</div>
+              <div class="featured-card__desc">Corazón de res, ensalada y papas con llajua de maní.</div>
+              <div class="featured-card__tags">
+                <span class="featured-card__tag">Artesanal</span>
+              </div>
+            </div>
+          </div>
+          <div class="featured-card" onclick="openDishDetail('chicharron_cerdo')">
+            <div class="featured-card__image-wrap">
+              <img src="assets/images/chicharron_cerdo.png" alt="Chicharrón de Cerdo" loading="lazy">
+              <span class="featured-card__badge">Especial</span>
+            </div>
+            <div class="featured-card__body">
+              <div class="featured-card__name">Chicharrón de Cerdo</div>
+              <div class="featured-card__price">65 bs</div>
+              <div class="featured-card__desc">Cerdo dorado con mote, papa y escabeche.</div>
+              <div class="featured-card__tags">
+                <span class="featured-card__tag">Tradicional</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 8 — MENU LIST
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-menu" role="main" aria-label="Menú del restaurante">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="setNavActive('home'); navigateTo('screen-home')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__title">Casa Ancestral</div>
+      <div class="header__right">
+        <button class="header__btn" onclick="showToast('No hay notificaciones nuevas')" aria-label="Notificaciones">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="header__avatar" onclick="showToast('Perfil próximamente')">
+          <img src="assets/images/logo.png" alt="Avatar">
+        </div>
+      </div>
+    </header>
+
+    <!-- Category Tabs -->
+    <div class="menu-tabs" role="tablist" aria-label="Categorías del menú">
+      <button class="menu-tab active" role="tab" aria-selected="true" data-tab="fuertes" onclick="switchMenuTab('fuertes')">Platos Fuertes</button>
+      <button class="menu-tab" role="tab" aria-selected="false" data-tab="picantes" onclick="switchMenuTab('picantes')">Picantes</button>
+      <button class="menu-tab" role="tab" aria-selected="false" data-tab="piqueos" onclick="switchMenuTab('piqueos')">Piqueos</button>
+      <button class="menu-tab" role="tab" aria-selected="false" data-tab="postres" onclick="switchMenuTab('postres')">Postres</button>
+      <button class="menu-tab" role="tab" aria-selected="false" data-tab="bebidas" onclick="switchMenuTab('bebidas')">Bebidas</button>
+    </div>
+
+    <div class="screen-content" id="menu-content">
+
+      <!-- TAB: Platos Fuertes -->
+      <div class="menu-section active" id="tab-fuertes" role="tabpanel">
+        <h2 class="menu-section-title">Platos Fuertes</h2>
+        <div id="menu-items-fuertes"></div>
+      </div>
+
+      <!-- TAB: Picantes -->
+      <div class="menu-section" id="tab-picantes" role="tabpanel">
+        <h2 class="menu-section-title">Picantes</h2>
+        <div id="menu-items-picantes"></div>
+      </div>
+
+      <!-- TAB: Piqueos -->
+      <div class="menu-section" id="tab-piqueos" role="tabpanel">
+        <h2 class="menu-section-title">Piqueos</h2>
+        <div id="menu-items-piqueos"></div>
+      </div>
+
+      <!-- TAB: Postres -->
+      <div class="menu-section" id="tab-postres" role="tabpanel">
+        <h2 class="menu-section-title">Postres</h2>
+        <div id="menu-items-postres"></div>
+      </div>
+
+      <!-- TAB: Bebidas -->
+      <div class="menu-section" id="tab-bebidas" role="tabpanel">
+        <h2 class="menu-section-title">Bebidas</h2>
+        <div id="menu-items-bebidas"></div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 9 — DISH DETAIL
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-dish-detail" role="main" aria-label="Detalle del plato">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" id="dish-back-btn" onclick="navigateTo(window._prevScreen || 'screen-menu')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__title">Casa Ancestral</div>
+      <div class="header__right">
+        <button class="header__btn" onclick="showToast('No hay notificaciones nuevas')" aria-label="Notificaciones">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="header__avatar">
+          <img src="assets/images/logo.png" alt="Avatar">
+        </div>
+      </div>
+    </header>
+
+    <div class="screen-content" id="dish-detail-content">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 10 — CART
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-cart" role="main" aria-label="Carrito de pedidos">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="setNavActive('home'); navigateTo('screen-home')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__title">Casa Ancestral</div>
+      <div class="header__right">
+        <button class="header__btn" onclick="showToast('No hay notificaciones nuevas')" aria-label="Notificaciones">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="header__avatar">
+          <img src="assets/images/logo.png" alt="Avatar">
+        </div>
+      </div>
+    </header>
+
+    <div class="screen-content" id="cart-content">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 11 — CHECKOUT
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-checkout" role="main" aria-label="Pago y entrega">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="navigateTo('screen-cart')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__title">Casa Ancestral</div>
+      <div class="header__right"></div>
+    </header>
+
+    <div class="screen-content">
+      <!-- Método de entrega -->
+      <div class="checkout-section">
+        <h2 class="checkout-section__title">Método de entrega</h2>
+        <div class="delivery-toggle" role="group" aria-label="Método de entrega">
+          <button class="delivery-option active" id="delivery-domicilio" onclick="selectDelivery('domicilio')" aria-pressed="true">Envío a domicilio</button>
+          <button class="delivery-option" id="delivery-local" onclick="selectDelivery('local')" aria-pressed="false">Recojo en local</button>
+        </div>
+      </div>
+
+      <!-- Método de pago -->
+      <div class="checkout-section">
+        <div class="checkout-section__title-row">
+          <h2 class="checkout-section__title">Método de pago</h2>
+          <div class="security-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Encriptación Segura
+          </div>
+        </div>
+
+        <div class="payment-method-card selected" id="pay-card-1" onclick="selectPayMethod(1)" role="button" aria-pressed="true">
+          <div class="payment-method-card__icon">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </div>
+          <div class="payment-method-card__info">
+            <div class="payment-method-card__name">•••• 4242</div>
+            <div class="payment-method-card__detail">Expira 12/26</div>
+          </div>
+          <div class="radio-dot" aria-hidden="true"></div>
+        </div>
+
+        <div class="payment-method-card" id="pay-card-2" onclick="selectPayMethod(2)" role="button" aria-pressed="false">
+          <div class="payment-method-card__icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h2m4 0h4"/></svg>
+          </div>
+          <div class="payment-method-card__info">
+            <div class="payment-method-card__name">Pago Digital</div>
+          </div>
+          <div class="radio-dot" aria-hidden="true"></div>
+        </div>
+
+        <button class="add-payment-btn" onclick="showToast('Función próximamente disponible')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+          Añadir Nuevo Método
+        </button>
+
+        <!-- Card details form -->
+        <div id="card-details-form">
+          <div style="margin-bottom:var(--space-3);">
+            <label class="field-label" for="card-holder">Nombre del Titular</label>
+            <input type="text" class="input-field input-field--flat" id="card-holder" placeholder="ALEJANDRO VANCE" autocomplete="cc-name">
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="field-label" for="card-exp">Vencimiento</label>
+              <input type="text" class="input-field input-field--flat" id="card-exp" placeholder="MM / AA" maxlength="7" autocomplete="cc-exp">
+            </div>
+            <div>
+              <label class="field-label" for="card-cvv">CVV</label>
+              <input type="text" class="input-field input-field--flat" id="card-cvv" placeholder="•••" maxlength="4" autocomplete="cc-csc">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: var(--space-4) var(--px);">
+        <button class="btn btn-primary btn-primary-full" onclick="handleCheckoutConfirm()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          Confirmar Pago
+        </button>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 12 — RESERVATIONS (calendar)
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-reservations" role="main" aria-label="Reservas">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="setNavActive('home'); navigateTo('screen-home')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__title">Casa Ancestral</div>
+      <div class="header__right">
+        <button class="header__btn" onclick="showToast('No hay notificaciones nuevas')" aria-label="Notificaciones">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="header__avatar">
+          <img src="assets/images/logo.png" alt="Avatar">
+        </div>
+      </div>
+    </header>
+
+    <div class="screen-content">
+      <div class="reservations-hero">
+        <h1 class="reservations-hero__title">Reservas</h1>
+        <p class="reservations-hero__subtitle">Asegura tu mesa para una experiencia culinaria única.</p>
+      </div>
+
+      <!-- Calendar Card -->
+      <div class="reservations-card">
+        <div class="reservations-card__header">
+          <h2 class="reservations-card__title">Selecciona Fecha</h2>
+          <div class="calendar-nav">
+            <button class="calendar-nav-btn" onclick="changeMonth(-1)" aria-label="Mes anterior">‹</button>
+            <button class="calendar-nav-btn" onclick="changeMonth(1)" aria-label="Mes siguiente">›</button>
+          </div>
+        </div>
+        <div class="calendar-month" id="calendar-month-label">OCTUBRE 2024</div>
+        <div class="calendar-grid" id="calendar-grid" role="grid" aria-label="Calendario de fechas"></div>
+      </div>
+
+      <!-- Guests Stepper -->
+      <div class="reservations-card">
+        <h2 class="reservations-card__title" style="margin-bottom:var(--space-4);">Número de Comensales</h2>
+        <div class="stepper" role="group" aria-label="Número de comensales">
+          <button class="stepper-btn" onclick="changeGuests(-1)" aria-label="Reducir comensales">−</button>
+          <div class="stepper-value" id="guests-value" aria-live="polite">4</div>
+          <button class="stepper-btn" onclick="changeGuests(1)" aria-label="Aumentar comensales">+</button>
+        </div>
+      </div>
+
+      <div style="padding: 0 var(--px) var(--space-4);">
+        <button class="btn btn-primary btn-primary-full" onclick="goToTimeSelection()">RESERVAR</button>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 13 — TIME SELECTION
+  ═══════════════════════════════════════ -->
+  <section class="screen" id="screen-reservation-time" role="main" aria-label="Selección de horario">
+    <header class="app-header">
+      <div class="header__left">
+        <button class="header__btn" onclick="navigateTo('screen-reservations')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="header__title">Casa Ancestral</div>
+      <div class="header__right">
+        <button class="header__btn" onclick="showToast('No hay notificaciones nuevas')" aria-label="Notificaciones">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="header__avatar">
+          <img src="assets/images/logo.png" alt="Avatar">
+        </div>
+      </div>
+    </header>
+
+    <div class="screen-content">
+      <div style="padding: var(--space-5) var(--px);">
+        <!-- Time tabs -->
+        <div class="time-tabs" role="tablist" aria-label="Turno de comida">
+          <button class="time-tab active" role="tab" aria-selected="true" id="tab-almuerzo" onclick="switchTimeTab('almuerzo')">ALMUERZO</button>
+          <button class="time-tab" role="tab" aria-selected="false" id="tab-cena" onclick="switchTimeTab('cena')">CENA</button>
+        </div>
+
+        <!-- Time slots -->
+        <div class="time-slots-grid" id="time-slots-almuerzo" role="group" aria-label="Horarios de almuerzo">
+          <button class="time-slot" onclick="selectTimeSlot(this, '12:30 PM')" aria-pressed="false">12:30 PM</button>
+          <button class="time-slot" onclick="selectTimeSlot(this, '01:00 PM')" aria-pressed="false">01:00 PM</button>
+          <button class="time-slot selected" onclick="selectTimeSlot(this, '01:45 PM')" aria-pressed="true">01:45 PM</button>
+          <button class="time-slot" onclick="selectTimeSlot(this, '02:15 PM')" aria-pressed="false">02:15 PM</button>
+          <button class="time-slot" onclick="selectTimeSlot(this, '02:45 PM')" aria-pressed="false">02:45 PM</button>
+          <button class="time-slot disabled" disabled aria-disabled="true" aria-label="03:30 PM no disponible">03:30 PM</button>
+        </div>
+
+        <div class="time-slots-grid hidden" id="time-slots-cena" role="group" aria-label="Horarios de cena">
+          <button class="time-slot" onclick="selectTimeSlot(this, '07:00 PM')" aria-pressed="false">07:00 PM</button>
+          <button class="time-slot" onclick="selectTimeSlot(this, '07:30 PM')" aria-pressed="false">07:30 PM</button>
+          <button class="time-slot" onclick="selectTimeSlot(this, '08:00 PM')" aria-pressed="false">08:00 PM</button>
+          <button class="time-slot" onclick="selectTimeSlot(this, '08:30 PM')" aria-pressed="false">08:30 PM</button>
+          <button class="time-slot disabled" disabled aria-disabled="true">09:00 PM</button>
+          <button class="time-slot" onclick="selectTimeSlot(this, '09:30 PM')" aria-pressed="false">09:30 PM</button>
+        </div>
+
+        <!-- Summary -->
+        <div class="reservation-summary-card">
+          <div class="reservation-summary-card__label">Tu Selección</div>
+          <div class="reservation-summary-card__value" id="reservation-summary-text">10 Oct • 01:45 PM • 4 Personas</div>
+        </div>
+
+        <button class="btn btn-primary btn-primary-full" onclick="confirmReservation()">CONFIRMAR RESERVA</button>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 14 — ORDER SUCCESS
+  ═══════════════════════════════════════ -->
+  <section class="screen success-screen" id="screen-order-success" role="main" aria-label="Pedido confirmado">
+    <div class="success-screen__icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1 class="success-screen__title">¡Pedido Confirmado!</h1>
+    <p class="success-screen__text">Tu pedido ha sido recibido. Prepara tu paladar para una experiencia ancestral.</p>
+    <button class="btn btn-primary" onclick="setNavActive('home'); navigateTo('screen-home'); clearCart()">Volver al Inicio</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 15 — RESERVATION SUCCESS
+  ═══════════════════════════════════════ -->
+  <section class="screen success-screen" id="screen-reservation-success" role="main" aria-label="Reserva confirmada">
+    <div class="success-screen__icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1 class="success-screen__title">¡Reserva Confirmada!</h1>
+    <p class="success-screen__text" id="reservation-confirmed-text">Tu mesa ha sido reservada. Te esperamos con los mejores sabores de Bolivia.</p>
+    <button class="btn btn-primary" onclick="setNavActive('home'); navigateTo('screen-home')">Volver al Inicio</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       TOAST NOTIFICATION
+  ═══════════════════════════════════════ -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</div><!-- #app -->
+
+<script src="js/script.js"></script>
+</body>
+</html>
