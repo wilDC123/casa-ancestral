@@ -161,6 +161,60 @@ function goBack() {
   navigateTo(App.prevScreen || 'screen-home');
 }
 
+/* ─── Sidebar Drawer ──────────────────────────────────────── */
+function openSidebar() {
+  document.getElementById('sidebar-drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar-drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ─── Profile Bottom Sheet ────────────────────────────────── */
+function openProfile() {
+  // Poblar datos del usuario
+  const name  = App.currentUser?.name  || 'Usuario';
+  const email = App.currentUser?.email || '—';
+  const initial = name[0]?.toUpperCase() || '?';
+
+  const nameEl    = document.getElementById('profile-name');
+  const emailEl   = document.getElementById('profile-email');
+  const initialEl = document.getElementById('profile-avatar-initial');
+
+  if (nameEl)    nameEl.textContent    = name;
+  if (emailEl)   emailEl.textContent   = email;
+  if (initialEl) initialEl.textContent = initial;
+
+  document.getElementById('profile-sheet').classList.add('open');
+  document.getElementById('sheet-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProfile() {
+  document.getElementById('profile-sheet').classList.remove('open');
+  document.getElementById('sheet-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ─── Logout ──────────────────────────────────────────────── */
+function handleLogout() {
+  closeSidebar();
+  closeProfile();
+  // Limpiar sesión y carrito
+  saveUser(null);
+  App.currentUser = null;
+  App.cart = [];
+  saveCart();
+  updateCartBadge();
+  // Volver al splash/welcome
+  showToast('Sesión cerrada correctamente');
+  setTimeout(() => navigateTo('screen-welcome'), 800);
+}
+
 function setNavActive(name) {
   document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
   const btn = document.querySelector(`.nav-item[data-nav="${name}"]`);
@@ -703,6 +757,11 @@ function showToast(msg, duration = 2800) {
 
 /* ─── Keyboard accessibility ──────────────────────────────── */
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeSidebar();
+    closeProfile();
+    return;
+  }
   if (e.key === 'Enter' || e.key === ' ') {
     const btn = document.activeElement;
     if (btn && btn.getAttribute('role') === 'button') {
