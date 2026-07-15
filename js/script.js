@@ -1,23 +1,43 @@
 /* =========================================================
-   CASA ANCESTRAL — App Logic
+   CASA ANCESTRAL — App Logic  v2
    SPA Navigation · Cart · Forms · Calendar · Reservations
+   ─────────────────────────────────────────────────────────
+   Mejoras v2:
+   · Sesión persistente con localStorage
+   · Carrito persistente con localStorage
+   · Splash salta si ya hay sesión activa
+   · Nav oculta en pantallas de auth
+   · Avatar con iniciales del usuario
+   · Scroll reset al cambiar tab del menú
+   · Validación de fecha de nacimiento
    ========================================================= */
 
 'use strict';
 
-// ─── App State ────────────────────────────────────────────
+/* ─── Constantes ──────────────────────────────────────────── */
+// Pantallas donde la barra de navegación NO debe mostrarse
+const AUTH_SCREENS = new Set([
+  'screen-splash',
+  'screen-welcome',
+  'screen-login',
+  'screen-register-1',
+  'screen-register-2',
+  'screen-welcome-user',
+]);
+
+/* ─── App State ───────────────────────────────────────────── */
 const App = {
-  cart: [],                    // Array of cart items
-  currentUser: null,           // Logged in user data
+  cart: [],
+  currentUser: null,
   currentScreen: 'screen-splash',
   prevScreen: 'screen-home',
   reservation: {
-    selectedDate: null,        // JS Date object
+    selectedDate: null,
     guests: 4,
     selectedTime: '01:45 PM',
     turn: 'almuerzo',
   },
-  calendarDate: new Date(2024, 9, 1),  // October 2024 initial
+  calendarDate: new Date(2024, 9, 1),
   selectedCalDay: 10,
   checkout: {
     delivery: 'domicilio',
@@ -25,60 +45,91 @@ const App = {
   },
 };
 
-// ─── Menu Data ────────────────────────────────────────────
+/* ─── localStorage helpers ────────────────────────────────── */
+function saveUser(user) {
+  if (user) {
+    localStorage.setItem('ancestral_user', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('ancestral_user');
+  }
+}
+
+function loadUser() {
+  try {
+    const raw = localStorage.getItem('ancestral_user');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveCart() {
+  localStorage.setItem('ancestral_cart', JSON.stringify(App.cart));
+}
+
+function loadCart() {
+  try {
+    const raw = localStorage.getItem('ancestral_cart');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+/* ─── Menu Data ───────────────────────────────────────────── */
 const MENU = {
   fuertes: [
-    { id: 'cazuela_mani',        name: 'Cazuela de Maní',           price: 20,  img: 'cazuela_mani',    desc: 'Un abrazo de nuestra cocina tradicional: maní molido que da vida a un caldo generoso con carne de res, verduras y chuño.',             hero: 'fullwidth' },
-    { id: 'crema_hongos',        name: 'Crema de Hongos Nativos',    price: 28,  img: 'picante_mixto',   desc: 'Los hongos orgánicos de Pisili Tarabuco se transforman en una crema delicada que rinde homenaje a los sabores del valle.',      hero: 'square' },
-    { id: 'sullka_picada',       name: 'Sullka Picada',              price: 75,  img: 'chicharron_cerdo',desc: 'Carne de res, tripa, papas y mote reunidos en una preparación que conserva la esencia de las mesas populares.',               hero: 'square' },
-    { id: 'chorizo_chuquis',     name: 'Chorizo Chuquisaqueño',      price: 50,  img: 'chorizo',         desc: 'El sabor inconfundible del chorizo artesanal, acompañado de pan casero y ensalada fresca, como dicta la tradición chuquisaqueña.', hero: 'fullwidth' },
-    { id: 'charquekan',          name: 'Charquekan',                 price: 70,  img: 'anticucho',       desc: 'Charque de llama o res deshidratado al sol, acompañado de mote, chuño, huevo duro y queso fresco. Un clásico andino.',         hero: 'square' },
-    { id: 'chicharron_cerdo',    name: 'Chicharrón de Cerdo',        price: 65,  img: 'chicharron_cerdo',desc: 'Cerdo dorado hasta alcanzar el punto perfecto, servido con mote, papa y escabeche en una combinación llena de identidad.',     hero: 'fullwidth' },
-    { id: 'chicharron_mexic',    name: 'Chicharrón Mexicano',        price: 65,  img: 'chicharron_cerdo',desc: 'Una fusión audaz: chicharrón crujiente con salsa verde, cebolla morada, cilantro y chile. Identidad con sabor a aventura.',      hero: 'square' },
-    { id: 'pasta_ckocko',        name: 'Pasta al Ckocko de Pollo',   price: 65,  img: 'picante_mixto',   desc: 'Pasta artesanal bañada en salsa de ckocko, maní tostado y pollo desmechado. Donde la tradición abraza la contemporaneidad.',    hero: 'square' },
-    { id: 'pique_lobo',          name: 'Pique Lobo',                 price: 80,  img: 'chicharron_cerdo',desc: 'Carne, chorizo, papa y locoto en el famoso pique a lo macho de la cocina boliviana. Intenso, contundente e irresistible.',      hero: 'fullwidth' },
+    { id: 'cazuela_mani',      name: 'Cazuela de Maní',           price: 20,  img: 'cazuela_mani',    desc: 'Un abrazo de nuestra cocina tradicional: maní molido que da vida a un caldo generoso con carne de res, verduras y chuño.',             hero: 'fullwidth' },
+    { id: 'crema_hongos',      name: 'Crema de Hongos Nativos',   price: 28,  img: 'picante_mixto',   desc: 'Los hongos orgánicos de Pisili Tarabuco se transforman en una crema delicada que rinde homenaje a los sabores del valle.',      hero: 'square' },
+    { id: 'sullka_picada',     name: 'Sullka Picada',             price: 75,  img: 'chicharron_cerdo',desc: 'Carne de res, tripa, papas y mote reunidos en una preparación que conserva la esencia de las mesas populares.',               hero: 'square' },
+    { id: 'chorizo_chuquis',   name: 'Chorizo Chuquisaqueño',     price: 50,  img: 'chorizo',         desc: 'El sabor inconfundible del chorizo artesanal, acompañado de pan casero y ensalada fresca, como dicta la tradición chuquisaqueña.', hero: 'fullwidth' },
+    { id: 'charquekan',        name: 'Charquekan',                price: 70,  img: 'anticucho',       desc: 'Charque de llama o res deshidratado al sol, acompañado de mote, chuño, huevo duro y queso fresco. Un clásico andino.',         hero: 'square' },
+    { id: 'chicharron_cerdo',  name: 'Chicharrón de Cerdo',       price: 65,  img: 'chicharron_cerdo',desc: 'Cerdo dorado hasta alcanzar el punto perfecto, servido con mote, papa y escabeche en una combinación llena de identidad.',     hero: 'fullwidth' },
+    { id: 'chicharron_mexic',  name: 'Chicharrón Mexicano',       price: 65,  img: 'chicharron_cerdo',desc: 'Una fusión audaz: chicharrón crujiente con salsa verde, cebolla morada, cilantro y chile. Identidad con sabor a aventura.',      hero: 'square' },
+    { id: 'pasta_ckocko',      name: 'Pasta al Ckocko de Pollo',  price: 65,  img: 'picante_mixto',   desc: 'Pasta artesanal bañada en salsa de ckocko, maní tostado y pollo desmechado. Donde la tradición abraza la contemporaneidad.',    hero: 'square' },
+    { id: 'pique_lobo',        name: 'Pique Lobo',                price: 80,  img: 'chicharron_cerdo',desc: 'Carne, chorizo, papa y locoto en el famoso pique a lo macho de la cocina boliviana. Intenso, contundente e irresistible.',      hero: 'fullwidth' },
   ],
   picantes: [
-    { id: 'mondongo',            name: 'Mondongo',                   price: 55,  img: 'picante_mixto',   desc: 'Estómago de cerdo en ají colorado, cocinado a fuego lento con mote y palillo. Sabor profundo de nuestra gastronomía.',         hero: 'square' },
-    { id: 'picante_mixto',       name: 'Picante Mixto',              price: 80,  img: 'picante_mixto',   desc: 'La máxima expresión del picante boliviano: pollo y lengua de res en ají amarillo con pasta, papa y chuñofuti.',               hero: 'fullwidth' },
-    { id: 'picante_lengua',      name: 'Picante de Lengua',          price: 80,  img: 'picante_mixto',   desc: 'Lengua de res tiernizada en salsa de ají amarillo y rojo, con tallarín artesanal. Una preparación que requiere paciencia.',    hero: 'square' },
-    { id: 'picante_pollo',       name: 'Picante de Pollo',           price: 55,  img: 'cazuela_mani',    desc: 'Pollo al ají rojo acompañado de tallarín, papa y chuñofuti, una expresión del sabor intenso de la cocina boliviana.',          hero: 'square' },
+    { id: 'mondongo',          name: 'Mondongo',                  price: 55,  img: 'picante_mixto',   desc: 'Estómago de cerdo en ají colorado, cocinado a fuego lento con mote y palillo. Sabor profundo de nuestra gastronomía.',         hero: 'square' },
+    { id: 'picante_mixto',     name: 'Picante Mixto',             price: 80,  img: 'picante_mixto',   desc: 'La máxima expresión del picante boliviano: pollo y lengua de res en ají amarillo con pasta, papa y chuñofuti.',               hero: 'fullwidth' },
+    { id: 'picante_lengua',    name: 'Picante de Lengua',         price: 80,  img: 'picante_mixto',   desc: 'Lengua de res tiernizada en salsa de ají amarillo y rojo, con tallarín artesanal. Una preparación que requiere paciencia.',    hero: 'square' },
+    { id: 'picante_pollo',     name: 'Picante de Pollo',          price: 55,  img: 'cazuela_mani',    desc: 'Pollo al ají rojo acompañado de tallarín, papa y chuñofuti, una expresión del sabor intenso de la cocina boliviana.',          hero: 'square' },
   ],
   piqueos: [
-    { id: 'anticucho',           name: 'Anticucho',                  price: 25,  img: 'anticucho',       desc: 'Corazón de res marinado en ají panca y comino, asado a las brasas. Servido con papa y llajua de maní.',                       hero: 'fullwidth' },
-    { id: 'tripitas',            name: 'Tripitas',                   price: 25,  img: 'anticucho',       desc: 'Tripitas de res acompañadas de mote y papa, preparadas para quienes disfrutan de los sabores más arraigados de nuestra gastronomía.', hero: 'square' },
-    { id: 'papas_nativas',       name: 'Papas Nativas',              price: 25,  img: 'chicharron_cerdo',desc: 'Papas nativas del altiplano boliviano, cocidas y servidas con llajua, queso fresco y kanamotera. Sencillez que enamora.',       hero: 'square' },
-    { id: 'sandwich_charque',    name: 'Sandwich de Charque',        price: 25,  img: 'chorizo',         desc: 'Charque de llama desmechado, locoto, tomate y cebolla dentro de pan casero. El sandwich de los valles.',                        hero: 'square' },
-    { id: 'salchipapita',        name: 'Salchipapita',               price: 25,  img: 'anticucho',       desc: 'Papas fritas artesanales con salchicha criolla, acompañadas de las salsas de la casa. Piqueo para compartir.',                 hero: 'square' },
-    { id: 'pipoca_pollo',        name: 'Pipoca de Pollo',            price: 25,  img: 'chicharron_cerdo',desc: 'Pequeñas piezas de pollo empanizadas con especias locales, crujientes por fuera y jugosas por dentro. Irresistibles.',          hero: 'square' },
-    { id: 'sandwich_veg',        name: 'Sandwich Vegetariano',       price: 30,  img: 'pan_campo',       desc: 'Hongos salteados y ensalada de maní dentro de pan casero, una alternativa que celebra los sabores naturales.',                  hero: 'square' },
-    { id: 'ensalada_quinua',     name: 'Ensalada de Quinua',         price: 45,  img: 'pan_campo',       desc: 'Quinua real boliviana con vegetales de temporada, vinagreta de llajua y hierbas del jardín. Nutrición ancestral.',             hero: 'square' },
+    { id: 'anticucho',         name: 'Anticucho',                 price: 25,  img: 'anticucho',       desc: 'Corazón de res marinado en ají panca y comino, asado a las brasas. Servido con papa y llajua de maní.',                       hero: 'fullwidth' },
+    { id: 'tripitas',          name: 'Tripitas',                  price: 25,  img: 'anticucho',       desc: 'Tripitas de res acompañadas de mote y papa, preparadas para quienes disfrutan de los sabores más arraigados de nuestra gastronomía.', hero: 'square' },
+    { id: 'papas_nativas',     name: 'Papas Nativas',             price: 25,  img: 'chicharron_cerdo',desc: 'Papas nativas del altiplano boliviano, cocidas y servidas con llajua, queso fresco y kanamotera. Sencillez que enamora.',       hero: 'square' },
+    { id: 'sandwich_charque',  name: 'Sandwich de Charque',       price: 25,  img: 'chorizo',         desc: 'Charque de llama desmechado, locoto, tomate y cebolla dentro de pan casero. El sandwich de los valles.',                        hero: 'square' },
+    { id: 'salchipapita',      name: 'Salchipapita',              price: 25,  img: 'anticucho',       desc: 'Papas fritas artesanales con salchicha criolla, acompañadas de las salsas de la casa. Piqueo para compartir.',                 hero: 'square' },
+    { id: 'pipoca_pollo',      name: 'Pipoca de Pollo',           price: 25,  img: 'chicharron_cerdo',desc: 'Pequeñas piezas de pollo empanizadas con especias locales, crujientes por fuera y jugosas por dentro. Irresistibles.',          hero: 'square' },
+    { id: 'sandwich_veg',      name: 'Sandwich Vegetariano',      price: 30,  img: 'pan_campo',       desc: 'Hongos salteados y ensalada de maní dentro de pan casero, una alternativa que celebra los sabores naturales.',                  hero: 'square' },
+    { id: 'ensalada_quinua',   name: 'Ensalada de Quinua',        price: 45,  img: 'pan_campo',       desc: 'Quinua real boliviana con vegetales de temporada, vinagreta de llajua y hierbas del jardín. Nutrición ancestral.',             hero: 'square' },
   ],
   postres: [
-    { id: 'helado',              name: 'Helado',                     price: 18,  img: 'pan_campo',       desc: 'Helados artesanales elaborados con ingredientes locales: tuna, chirimoya y maracuyá. Frescura con identidad.',                  hero: 'square' },
-    { id: 'afogatto',            name: 'Afogatto',                   price: 18,  img: 'pan_campo',       desc: 'Helado de crema de leche bañado en espresso doble. El encuentro perfecto entre lo frío y lo ardiente.',                         hero: 'square' },
+    { id: 'helado',            name: 'Helado',                    price: 18,  img: 'pan_campo',       desc: 'Helados artesanales elaborados con ingredientes locales: tuna, chirimoya y maracuyá. Frescura con identidad.',                  hero: 'square' },
+    { id: 'afogatto',          name: 'Afogatto',                  price: 18,  img: 'pan_campo',       desc: 'Helado de crema de leche bañado en espresso doble. El encuentro perfecto entre lo frío y lo ardiente.',                         hero: 'square' },
   ],
   bebidas: [
-    { id: 'soda_artesanal',      name: 'Soda Artesanal',             price: 15,  img: 'pan_campo',       desc: 'Gaseosas artesanales con sabores de frutas bolivianas: mocochinchi, tuna, maracuyá y chirimoya. Refrescantes y únicas.',        hero: 'square', special: false },
-    { id: 'refresco_jarra',      name: 'Refresco Jarra',             price: 35,  img: 'cazuela_mani',    desc: 'Refrescos naturales servidos en jarra de barro: chicha de maní, mocochinchi, y api morado. Para compartir la mesa.',            hero: 'square', special: 'jarra' },
-    { id: 'pan_campo_b',         name: 'Pan de Campo',               price: 8,   img: 'pan_campo',       desc: 'Masa madre de 48 horas, fermentada en frío y horneada a la leña. Perfecto para acompañar cualquier plato.',                    hero: 'fullwidth', special: false },
+    { id: 'soda_artesanal',    name: 'Soda Artesanal',            price: 15,  img: 'pan_campo',       desc: 'Gaseosas artesanales con sabores de frutas bolivianas: mocochinchi, tuna, maracuyá y chirimoya. Refrescantes y únicas.',        hero: 'square',    special: false },
+    { id: 'refresco_jarra',    name: 'Refresco Jarra',            price: 35,  img: 'cazuela_mani',    desc: 'Refrescos naturales servidos en jarra de barro: chicha de maní, mocochinchi, y api morado. Para compartir la mesa.',            hero: 'square',    special: 'jarra' },
+    { id: 'pan_campo_b',       name: 'Pan de Campo',              price: 8,   img: 'pan_campo',       desc: 'Masa madre de 48 horas, fermentada en frío y horneada a la leña. Perfecto para acompañar cualquier plato.',                    hero: 'fullwidth', special: false },
   ],
 };
 
-// Flat map of all dishes by id
+// Mapa plano de todos los platos por id
 const ALL_DISHES = {};
 Object.values(MENU).forEach(cat => cat.forEach(d => { ALL_DISHES[d.id] = d; }));
 
-// ─── Navigation System ────────────────────────────────────
+/* ─── Navigation ──────────────────────────────────────────── */
 window._prevScreen = 'screen-home';
 
-function navigateTo(screenId, direction = 'forward') {
+function navigateTo(screenId) {
   const current = document.querySelector('.screen.active');
   const target  = document.getElementById(screenId);
   if (!target || !current || current.id === screenId) return;
 
   window._prevScreen = current.id;
-  App.prevScreen = current.id;
+  App.prevScreen     = current.id;
 
   current.classList.remove('active');
   current.style.display = 'none';
@@ -86,7 +137,6 @@ function navigateTo(screenId, direction = 'forward') {
   target.style.display = 'flex';
   target.classList.add('active');
 
-  // Small delay so display:flex takes effect before animation reads layout
   requestAnimationFrame(() => {
     target.classList.add('slide-in');
     setTimeout(() => target.classList.remove('slide-in'), 300);
@@ -94,11 +144,17 @@ function navigateTo(screenId, direction = 'forward') {
 
   App.currentScreen = screenId;
 
-  // Screen-specific init hooks
-  if (screenId === 'screen-cart')       renderCart();
-  if (screenId === 'screen-home')       updateCartBadge();
-  if (screenId === 'screen-reservations') renderCalendar();
-  if (screenId === 'screen-reservation-time') updateReservationSummary();
+  // Control de visibilidad de la barra de navegación
+  const nav = document.getElementById('bottom-nav');
+  if (nav) {
+    nav.style.display = AUTH_SCREENS.has(screenId) ? 'none' : '';
+  }
+
+  // Hooks de init por pantalla
+  if (screenId === 'screen-cart')              renderCart();
+  if (screenId === 'screen-home')              updateCartBadge();
+  if (screenId === 'screen-reservations')      renderCalendar();
+  if (screenId === 'screen-reservation-time')  updateReservationSummary();
 }
 
 function goBack() {
@@ -111,14 +167,12 @@ function setNavActive(name) {
   if (btn) btn.classList.add('active');
 }
 
-// Bottom nav click handling
+// Clicks en la barra de navegación inferior
 document.getElementById('bottom-nav').addEventListener('click', e => {
   const item = e.target.closest('.nav-item[data-nav]');
   if (!item) return;
   const nav = item.dataset.nav;
-
   setNavActive(nav);
-
   const targets = {
     home:         'screen-home',
     menu:         'screen-menu',
@@ -128,18 +182,44 @@ document.getElementById('bottom-nav').addEventListener('click', e => {
   if (targets[nav]) navigateTo(targets[nav]);
 });
 
-// ─── Splash Screen ────────────────────────────────────────
-function initSplash() {
-  // Show bottom nav only after splash
-  document.getElementById('bottom-nav').style.display = 'none';
+/* ─── Avatar ──────────────────────────────────────────────── */
+function updateHeaderAvatars() {
+  const name    = App.currentUser?.name || '';
+  const initial = name ? name[0].toUpperCase() : '?';
 
-  setTimeout(() => {
-    document.getElementById('bottom-nav').style.display = '';
-    navigateTo('screen-welcome');
-  }, 2400);
+  document.querySelectorAll('.header__avatar').forEach(el => {
+    // Si hay foto de usuario futura, aquí se pondría; por ahora iniciales
+    const hasImg = el.querySelector('img');
+    if (hasImg) {
+      // Reemplazar la imagen con el span de inicial
+      el.innerHTML = `<span class="avatar-initial">${initial}</span>`;
+    }
+  });
 }
 
-// ─── Menu Rendering ───────────────────────────────────────
+/* ─── Splash ──────────────────────────────────────────────── */
+function initSplash() {
+  // Ocultar nav siempre durante el splash
+  const nav = document.getElementById('bottom-nav');
+  if (nav) nav.style.display = 'none';
+
+  const savedUser = loadUser();
+
+  setTimeout(() => {
+    if (savedUser) {
+      // Ya hay sesión → saltar login y ir directo al Home
+      App.currentUser = savedUser;
+      updateHeaderAvatars();
+      setNavActive('home');
+      navigateTo('screen-home');
+    } else {
+      // Primera vez → flujo de auth
+      navigateTo('screen-welcome');
+    }
+  }, 1800);
+}
+
+/* ─── Menu Rendering ──────────────────────────────────────── */
 function renderAllMenuSections() {
   Object.entries(MENU).forEach(([cat, items]) => {
     const container = document.getElementById(`menu-items-${cat}`);
@@ -179,6 +259,10 @@ function switchMenuTab(tab) {
   document.querySelectorAll('.menu-section').forEach(s => {
     s.classList.toggle('active', s.id === `tab-${tab}`);
   });
+
+  // FIX #7: Resetear scroll al inicio de la sección al cambiar de tab
+  const content = document.getElementById('menu-content');
+  if (content) content.scrollTop = 0;
 }
 
 function openMenuCategory(cat) {
@@ -187,12 +271,12 @@ function openMenuCategory(cat) {
   setTimeout(() => switchMenuTab(cat), 50);
 }
 
-// ─── Dish Detail ──────────────────────────────────────────
+/* ─── Dish Detail ─────────────────────────────────────────── */
 function openDishDetail(id) {
   const dish = ALL_DISHES[id];
   if (!dish) return;
 
-  const imgSrc = `assets/images/${dish.img}.png`;
+  const imgSrc      = `assets/images/${dish.img}.png`;
   const isFullwidth = dish.hero === 'fullwidth';
 
   const heroHTML = isFullwidth
@@ -224,7 +308,7 @@ function openDishDetail(id) {
   navigateTo('screen-dish-detail');
 }
 
-// ─── Cart System ──────────────────────────────────────────
+/* ─── Cart ────────────────────────────────────────────────── */
 function addToCart(id) {
   const dish = ALL_DISHES[id];
   if (!dish) return;
@@ -236,6 +320,7 @@ function addToCart(id) {
     App.cart.push({ ...dish, qty: 1 });
   }
 
+  saveCart();           // FIX #3: persistir en localStorage
   updateCartBadge();
   showToast(`✓ ${dish.name} agregado al carrito`);
   animateCartBadge();
@@ -243,6 +328,7 @@ function addToCart(id) {
 
 function removeFromCart(id) {
   App.cart = App.cart.filter(i => i.id !== id);
+  saveCart();
   updateCartBadge();
   renderCart();
 }
@@ -255,12 +341,14 @@ function changeQty(id, delta) {
     removeFromCart(id);
     return;
   }
+  saveCart();
   renderCart();
   updateCartBadge();
 }
 
 function clearCart() {
   App.cart = [];
+  saveCart();
   updateCartBadge();
 }
 
@@ -352,7 +440,7 @@ function renderCart() {
     <div class="bottom-spacer"></div>`;
 }
 
-// ─── Checkout ─────────────────────────────────────────────
+/* ─── Checkout ────────────────────────────────────────────── */
 function selectDelivery(type) {
   App.checkout.delivery = type;
   document.getElementById('delivery-domicilio').classList.toggle('active', type === 'domicilio');
@@ -368,13 +456,11 @@ function selectPayMethod(num) {
     card.classList.toggle('selected', n === num);
     card.setAttribute('aria-pressed', n === num);
   });
-  // Show/hide card form based on selection
   const form = document.getElementById('card-details-form');
   if (form) form.style.display = num === 1 ? '' : 'none';
 }
 
 function handleCheckoutConfirm() {
-  // Simple validation
   if (App.checkout.payMethod === 1) {
     const holder = document.getElementById('card-holder').value.trim();
     const exp    = document.getElementById('card-exp').value.trim();
@@ -384,11 +470,10 @@ function handleCheckoutConfirm() {
       return;
     }
   }
-
   navigateTo('screen-order-success');
 }
 
-// ─── Forms — Login ────────────────────────────────────────
+/* ─── Forms — Login ───────────────────────────────────────── */
 function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById('login-email').value.trim();
@@ -405,37 +490,45 @@ function handleLogin(e) {
 
   if (!valid) return;
 
-  // Simulate login
-  App.currentUser = { name: email.split('@')[0].toUpperCase() };
+  App.currentUser = { name: email.split('@')[0].toUpperCase(), email };
+  saveUser(App.currentUser);          // FIX #2: persistir sesión
+  updateHeaderAvatars();
+
   document.getElementById('welcome-name').textContent = App.currentUser.name;
   navigateTo('screen-welcome-user');
   setTimeout(() => { setNavActive('home'); navigateTo('screen-home'); }, 2200);
 }
 
-// ─── Forms — Register Step 1 ──────────────────────────────
+/* ─── Forms — Register Step 1 ────────────────────────────── */
 function handleRegisterStep1(e) {
   e.preventDefault();
   const nombre   = document.getElementById('reg-nombre').value.trim();
   const apellido = document.getElementById('reg-apellido').value.trim();
+  const dob      = document.getElementById('reg-dob').value.trim();
   const email    = document.getElementById('reg-email').value.trim();
   let valid = true;
 
-  if (!nombre)                        { showError('reg-nombre', 'reg-nombre-err');   valid = false; }
-  else                                  hideError('reg-nombre', 'reg-nombre-err');
+  if (!nombre)                        { showError('reg-nombre',   'reg-nombre-err');   valid = false; }
+  else                                  hideError('reg-nombre',   'reg-nombre-err');
 
   if (!apellido)                      { showError('reg-apellido', 'reg-apellido-err'); valid = false; }
   else                                  hideError('reg-apellido', 'reg-apellido-err');
 
-  if (!email || !email.includes('@')) { showError('reg-email', 'reg-email-err');     valid = false; }
-  else                                  hideError('reg-email', 'reg-email-err');
+  // FIX #10: validar fecha de nacimiento
+  if (!dob || dob.replace(/\D/g, '').length < 8) {
+    showError('reg-dob', 'reg-dob-err'); valid = false;
+  } else hideError('reg-dob', 'reg-dob-err');
+
+  if (!email || !email.includes('@')) { showError('reg-email',    'reg-email-err');    valid = false; }
+  else                                  hideError('reg-email',    'reg-email-err');
 
   if (!valid) return;
 
-  App.currentUser = { name: nombre.toUpperCase(), apellido };
+  App.currentUser = { name: nombre.toUpperCase(), apellido, email };
   navigateTo('screen-register-2');
 }
 
-// ─── Forms — Register Step 2 ──────────────────────────────
+/* ─── Forms — Register Step 2 ────────────────────────────── */
 function handleRegisterStep2(e) {
   e.preventDefault();
   const pass1 = document.getElementById('reg-pass1').value;
@@ -449,6 +542,9 @@ function handleRegisterStep2(e) {
   else                               hideError('reg-pass2', 'reg-pass2-err');
 
   if (!valid) return;
+
+  saveUser(App.currentUser);          // FIX #2: persistir sesión tras registro
+  updateHeaderAvatars();
 
   document.getElementById('welcome-name').textContent = App.currentUser?.name || 'USUARIO';
   navigateTo('screen-welcome-user');
@@ -469,7 +565,7 @@ function hideError(inputId, errId) {
   if (err)   err.classList.remove('show');
 }
 
-// ─── Calendar ─────────────────────────────────────────────
+/* ─── Calendar ────────────────────────────────────────────── */
 const MONTHS_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
 const DAYS_ES   = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'];
 
@@ -486,7 +582,6 @@ function renderCalendar() {
 
   let html = DAYS_ES.map(day => `<div class="calendar-grid__day-label">${day}</div>`).join('');
 
-  // Empty cells before first day
   for (let i = 0; i < firstDay; i++) {
     html += '<div></div>';
   }
@@ -498,18 +593,15 @@ function renderCalendar() {
     const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
 
     let cls = 'calendar-day';
-    if (isPast)  cls += ' disabled';
-    if (isSel)   cls += ' selected';
+    if (isPast)            cls += ' disabled';
+    if (isSel)             cls += ' selected';
     if (isToday && !isSel) cls += ' today';
 
     const disabled = isPast ? 'disabled aria-disabled="true"' : '';
-
     html += `<button class="${cls}" ${disabled} onclick="selectCalendarDay(${day}, ${year}, ${month})" aria-label="${day} de ${MONTHS_ES[month]}">${day}</button>`;
   }
 
   document.getElementById('calendar-grid').innerHTML = html;
-
-  // Update reservation summary
   updateReservationSummary();
 }
 
@@ -541,7 +633,7 @@ function goToTimeSelection() {
   navigateTo('screen-reservation-time');
 }
 
-// ─── Time Selection ───────────────────────────────────────
+/* ─── Time Selection ──────────────────────────────────────── */
 function switchTimeTab(turn) {
   App.reservation.turn = turn;
   ['almuerzo','cena'].forEach(t => {
@@ -572,11 +664,9 @@ function updateReservationSummary() {
   if (!summaryEl) return;
 
   const d = App.reservation.selectedDate || App.calendarDate;
-  const dateStr = d
-    ? `${d.getDate()} ${MONTHS_ES[d.getMonth()].substring(0,3)}`
-    : '—';
-  const time   = App.reservation.selectedTime || '—';
-  const guests = App.reservation.guests;
+  const dateStr = d ? `${d.getDate()} ${MONTHS_ES[d.getMonth()].substring(0, 3)}` : '—';
+  const time    = App.reservation.selectedTime || '—';
+  const guests  = App.reservation.guests;
 
   summaryEl.textContent = `${dateStr} • ${time} • ${guests} ${guests === 1 ? 'Persona' : 'Personas'}`;
 }
@@ -587,7 +677,7 @@ function confirmReservation() {
     return;
   }
 
-  const d = App.reservation.selectedDate || App.calendarDate;
+  const d       = App.reservation.selectedDate || App.calendarDate;
   const dateStr = d ? `${d.getDate()} de ${MONTHS_ES[d.getMonth()]}` : '';
   const time    = App.reservation.selectedTime;
   const guests  = App.reservation.guests;
@@ -600,7 +690,7 @@ function confirmReservation() {
   navigateTo('screen-reservation-success');
 }
 
-// ─── Toast Notification ───────────────────────────────────
+/* ─── Toast ───────────────────────────────────────────────── */
 let _toastTimer = null;
 function showToast(msg, duration = 2800) {
   const t = document.getElementById('toast');
@@ -611,7 +701,7 @@ function showToast(msg, duration = 2800) {
   _toastTimer = setTimeout(() => t.classList.remove('show'), duration);
 }
 
-// ─── Keyboard accessibility ───────────────────────────────
+/* ─── Keyboard accessibility ──────────────────────────────── */
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') {
     const btn = document.activeElement;
@@ -622,32 +712,35 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Card input formatting
+/* ─── Input formatting ────────────────────────────────────── */
 document.addEventListener('input', e => {
   const target = e.target;
   if (target.id === 'card-exp') {
     let v = target.value.replace(/\D/g, '');
-    if (v.length >= 3) v = v.substring(0,2) + ' / ' + v.substring(2,4);
+    if (v.length >= 3) v = v.substring(0, 2) + ' / ' + v.substring(2, 4);
     target.value = v;
   }
   if (target.id === 'reg-dob') {
     let v = target.value.replace(/\D/g, '');
-    if (v.length >= 5) v = v.substring(0,2) + '/' + v.substring(2,4) + '/' + v.substring(4,8);
-    else if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+    if (v.length >= 5)      v = v.substring(0, 2) + '/' + v.substring(2, 4) + '/' + v.substring(4, 8);
+    else if (v.length >= 3) v = v.substring(0, 2) + '/' + v.substring(2);
     target.value = v;
   }
 });
 
-// ─── Init ─────────────────────────────────────────────────
+/* ─── Init ────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  // Pre-render menu so it's ready
+  // FIX #3: Cargar carrito desde localStorage
+  App.cart = loadCart();
+
+  // Pre-renderizar menú
   renderAllMenuSections();
 
-  // Set initial calendar to current month or Oct 2024 as design shows
-  App.calendarDate    = new Date(2024, 9, 1);  // October 2024
-  App.selectedCalDay  = 10;
+  // Fecha inicial del calendario (Octubre 2024 como en el diseño)
+  App.calendarDate         = new Date(2024, 9, 1);
+  App.selectedCalDay       = 10;
   App.reservation.selectedDate = new Date(2024, 9, 10);
 
-  // Start splash
+  // FIX #4: Splash con detección de sesión
   initSplash();
 });

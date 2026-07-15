@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Casa Ancestral — Restaurante de cocina boliviana tradicional. Menú, reservas y pedidos en línea.">
   <meta name="theme-color" content="#5C1A1A">
   <title>Casa Ancestral — Cocina Boliviana</title>
@@ -62,7 +62,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 1 — SPLASH
   ═══════════════════════════════════════ -->
-  <section class="screen active" id="screen-splash" role="main" aria-label="Pantalla de bienvenida">
+  <section class="screen active" id="screen-splash" role="region" aria-label="Pantalla de bienvenida">
     <div class="splash__logo-wrap">
       <img src="assets/images/logo.png" alt="Logo Casa Ancestral">
     </div>
@@ -73,7 +73,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 2 — WELCOME (Register/Login)
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-welcome" role="main" aria-label="Pantalla de inicio de sesión o registro">
+  <section class="screen" id="screen-welcome" role="region" aria-label="Pantalla de inicio de sesión o registro">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="goBack()" aria-label="Volver">
@@ -100,7 +100,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 3 — LOGIN
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-login" role="main" aria-label="Iniciar sesión">
+  <section class="screen" id="screen-login" role="region" aria-label="Iniciar sesión">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="navigateTo('screen-welcome')" aria-label="Volver">
@@ -134,7 +134,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 4 — REGISTER STEP 1
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-register-1" role="main" aria-label="Registro paso 1">
+  <section class="screen" id="screen-register-1" role="region" aria-label="Registro paso 1">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="navigateTo('screen-welcome')" aria-label="Volver">
@@ -176,7 +176,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 5 — REGISTER STEP 2
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-register-2" role="main" aria-label="Registro paso 2">
+  <section class="screen" id="screen-register-2" role="region" aria-label="Registro paso 2">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="navigateTo('screen-register-1')" aria-label="Volver">
@@ -210,20 +210,22 @@
   <!-- ═══════════════════════════════════════
        SCREEN 6 — WELCOME USER (Post Login)
   ═══════════════════════════════════════ -->
-  <section class="screen success-screen" id="screen-welcome-user" role="main" aria-label="Bienvenida">
-    <div class="welcome-user__logo">
-      <img src="assets/images/logo.png" alt="Logo Ancestral">
-    </div>
-    <div class="welcome-user__text">
-      <div class="welcome-user__greeting">BIENVENIDO</div>
-      <div class="welcome-user__name" id="welcome-name">FERNANDO</div>
+  <section class="screen" id="screen-welcome-user" role="region" aria-label="Bienvenida">
+    <div class="screen-content success-screen">
+      <div class="welcome-user__logo">
+        <img src="assets/images/logo.png" alt="Logo Ancestral">
+      </div>
+      <div class="welcome-user__text">
+        <div class="welcome-user__greeting">BIENVENIDO</div>
+        <div class="welcome-user__name" id="welcome-name">FERNANDO</div>
+      </div>
     </div>
   </section>
 
   <!-- ═══════════════════════════════════════
        SCREEN 7 — HOME
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-home" role="main" aria-label="Inicio">
+  <section class="screen" id="screen-home" role="region" aria-label="Inicio">
     <header class="app-header" id="home-header">
       <div class="header__left">
         <button class="header__btn" aria-label="Menú lateral" onclick="showToast('Menú lateral próximamente')">
@@ -363,7 +365,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 8 — MENU LIST
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-menu" role="main" aria-label="Menú del restaurante">
+  <section class="screen" id="screen-menu" role="region" aria-label="Menú del restaurante">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="setNavActive('home'); navigateTo('screen-home')" aria-label="Volver">
@@ -429,7 +431,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 9 — DISH DETAIL
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-dish-detail" role="main" aria-label="Detalle del plato">
+  <section class="screen" id="screen-dish-detail" role="region" aria-label="Detalle del plato">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" id="dish-back-btn" onclick="navigateTo(window._prevScreen || 'screen-menu')" aria-label="Volver">
@@ -455,7 +457,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 10 — CART
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-cart" role="main" aria-label="Carrito de pedidos">
+  <section class="screen" id="screen-cart" role="region" aria-label="Carrito de pedidos">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="setNavActive('home'); navigateTo('screen-home')" aria-label="Volver">
@@ -481,7 +483,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 11 — CHECKOUT
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-checkout" role="main" aria-label="Pago y entrega">
+  <section class="screen" id="screen-checkout" role="region" aria-label="Pago y entrega">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="navigateTo('screen-cart')" aria-label="Volver">
@@ -571,7 +573,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 12 — RESERVATIONS (calendar)
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-reservations" role="main" aria-label="Reservas">
+  <section class="screen" id="screen-reservations" role="region" aria-label="Reservas">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="setNavActive('home'); navigateTo('screen-home')" aria-label="Volver">
@@ -629,7 +631,7 @@
   <!-- ═══════════════════════════════════════
        SCREEN 13 — TIME SELECTION
   ═══════════════════════════════════════ -->
-  <section class="screen" id="screen-reservation-time" role="main" aria-label="Selección de horario">
+  <section class="screen" id="screen-reservation-time" role="region" aria-label="Selección de horario">
     <header class="app-header">
       <div class="header__left">
         <button class="header__btn" onclick="navigateTo('screen-reservations')" aria-label="Volver">
@@ -690,25 +692,29 @@
   <!-- ═══════════════════════════════════════
        SCREEN 14 — ORDER SUCCESS
   ═══════════════════════════════════════ -->
-  <section class="screen success-screen" id="screen-order-success" role="main" aria-label="Pedido confirmado">
-    <div class="success-screen__icon">
-      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <section class="screen" id="screen-order-success" role="region" aria-label="Pedido confirmado">
+    <div class="screen-content success-screen">
+      <div class="success-screen__icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1 class="success-screen__title">¡Pedido Confirmado!</h1>
+      <p class="success-screen__text">Tu pedido ha sido recibido. Prepara tu paladar para una experiencia ancestral.</p>
+      <button class="btn btn-primary" onclick="setNavActive('home'); navigateTo('screen-home'); clearCart()">Volver al Inicio</button>
     </div>
-    <h1 class="success-screen__title">¡Pedido Confirmado!</h1>
-    <p class="success-screen__text">Tu pedido ha sido recibido. Prepara tu paladar para una experiencia ancestral.</p>
-    <button class="btn btn-primary" onclick="setNavActive('home'); navigateTo('screen-home'); clearCart()">Volver al Inicio</button>
   </section>
 
   <!-- ═══════════════════════════════════════
        SCREEN 15 — RESERVATION SUCCESS
   ═══════════════════════════════════════ -->
-  <section class="screen success-screen" id="screen-reservation-success" role="main" aria-label="Reserva confirmada">
-    <div class="success-screen__icon">
-      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <section class="screen" id="screen-reservation-success" role="region" aria-label="Reserva confirmada">
+    <div class="screen-content success-screen">
+      <div class="success-screen__icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1 class="success-screen__title">¡Reserva Confirmada!</h1>
+      <p class="success-screen__text" id="reservation-confirmed-text">Tu mesa ha sido reservada. Te esperamos con los mejores sabores de Bolivia.</p>
+      <button class="btn btn-primary" onclick="setNavActive('home'); navigateTo('screen-home')">Volver al Inicio</button>
     </div>
-    <h1 class="success-screen__title">¡Reserva Confirmada!</h1>
-    <p class="success-screen__text" id="reservation-confirmed-text">Tu mesa ha sido reservada. Te esperamos con los mejores sabores de Bolivia.</p>
-    <button class="btn btn-primary" onclick="setNavActive('home'); navigateTo('screen-home')">Volver al Inicio</button>
   </section>
 
   <!-- ═══════════════════════════════════════

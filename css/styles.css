@@ -289,11 +289,26 @@ body {
   overflow: hidden;
   border: 2px solid var(--color-border);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-warm);
 }
 .header__avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Avatar con iniciales del usuario */
+.avatar-initial {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
 }
 
 /* ─────────────────────────────────────────
@@ -619,11 +634,8 @@ body {
 /* ─────────────────────────────────────────
    WELCOME USER (POST LOGIN SPLASH)
 ───────────────────────────────────────── */
+/* #screen-welcome-user — el centrado lo hace .screen-content.success-screen */
 #screen-welcome-user {
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-5);
-  padding: var(--space-10) var(--px);
   background: var(--color-bg);
 }
 
@@ -1691,7 +1703,11 @@ body {
 /* ─────────────────────────────────────────
    CONFIRMATION / SUCCESS SCREEN
 ───────────────────────────────────────── */
+/* success-screen: puede ser modificador de .screen (antiguo) o de .screen-content (nuevo) */
+.screen-content.success-screen,
 .success-screen {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: var(--space-5);
