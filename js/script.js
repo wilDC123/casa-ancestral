@@ -111,7 +111,7 @@ const MENU = {
   ],
   bebidas: [
     { id: 'soda_artesanal',    name: 'Soda Artesanal',            price: 15,  img: 'sodaartesanal',       desc: 'Bebida artesanal rosada y refrescante con hielo y menta fresca, elaborada con fruta boliviana de temporada. Visualmente hermosa y deliciosa.',  hero: 'fullwidth', special: false },
-    { id: 'refresco_jarra',    name: 'Refresco Jarra',            price: 35,  img: 'cazuela_mani',        desc: 'Refrescos naturales servidos en jarra de barro: chicha de maní, mocochinchi, y api morado. Para compartir la mesa.',             hero: 'square',    special: 'jarra' },
+    { id: 'refresco_jarra',    name: 'Refresco Jarra',            price: 35,  img: 'refresco_jarra',      desc: 'Refrescos naturales servidos en jarra de barro: chicha de maní, mocochinchi, y api morado. Para compartir la mesa.',             hero: 'square',    special: 'jarra' },
     { id: 'pan_campo_b',       name: 'Pan de Campo',              price: 8,   img: 'pan_campo',           desc: 'Masa madre de 48 horas, fermentada en frío y horneada a la leña. Perfecto para acompañar cualquier plato.',                     hero: 'fullwidth', special: false },
   ],
 };
